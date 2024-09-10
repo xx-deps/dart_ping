@@ -133,4 +133,7 @@ abstract class Ping {
   /// summary to output before the stream is closed. If you cancel
   /// your stream subscription, you will not receive summary output.
   Future<bool> stop();
+
+  //force stop only for windows can go base_ping.dart 
+  Future<bool> forceStop();
 }
