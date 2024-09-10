@@ -178,4 +178,30 @@ abstract class BasePing {
 
     return false;
   }
+  
+  ///only for windows
+  Future<bool> forceStop() async {
+    if(!Platform.isWindows){
+      return false;
+    }
+    try {
+      final currentProcess = _process;
+      if (currentProcess == null) {
+        return false;
+      }
+      final pid = currentProcess.pid;
+      currentProcess.kill(ProcessSignal.sigkill);
+      await currentProcess.exitCode.timeout(
+        const Duration(milliseconds: 1000),
+        onTimeout: () {
+          Process.runSync('taskkill', ['/F', '/IM', '${pid}']);
+          return 0;
+        },
+      );
+      return true;
+    } catch (e, stackTrace) {
+      Process.runSync('taskkill', ['/F', '/IM', '${pid}']);
+      return true;
+    }
+  }
 }
