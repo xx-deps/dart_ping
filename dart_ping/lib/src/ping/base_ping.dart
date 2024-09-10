@@ -181,7 +181,7 @@ abstract class BasePing {
   
   ///only for windows
   Future<bool> forceStop() async {
-    if(!Platform.isWindows){
+    if (!Platform.isWindows) {
       return false;
     }
     try {
@@ -190,17 +190,10 @@ abstract class BasePing {
         return false;
       }
       final pid = currentProcess.pid;
-      currentProcess.kill(ProcessSignal.sigkill);
-      await currentProcess.exitCode.timeout(
-        const Duration(milliseconds: 1000),
-        onTimeout: () {
-          Process.runSync('taskkill', ['/F', '/IM', '${pid}']);
-          return 0;
-        },
-      );
+      Process.runSync('taskkill', ['-f', '/pid', pid.toString(), '-t']);
       return true;
     } catch (e, stackTrace) {
-      Process.runSync('taskkill', ['/F', '/IM', '${pid}']);
+      Process.runSync('taskkill', ['-f', '/pid', pid.toString(), '-t']);
       return true;
     }
   }
